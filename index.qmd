@@ -2,9 +2,7 @@
 title: "Home"
 ---
 
-# YOUR NAME HERE {#welcome}
-
-<!-- CHANGE THIS: replace with your own name above -->
+# Katie Steele {#welcome}
 
 Welcome to my portfolio for **MUSA 5080: Public Policy Analytics** at the
 University of Pennsylvania.
@@ -15,10 +13,8 @@ urban policy questions.
 
 ## About Me
 
-<!-- CHANGE THIS: two or three sentences about yourself -->
-
-I'm a student in the MUSA program at Penn. My background is in
-[YOUR BACKGROUND], and I'm interested in [YOUR INTERESTS].
+I'm a student in the Data Science MSE program at Penn; I'm also the Assistant Director for [PORES](pores.upenn.edu) and the [Fox Leadership Program](foxleadership.upenn.edu) on campus. 
+My background is in economics, statistics and quantitative political science research, and I'm excited to learn more about spatial analysis and to apply my skills to new policy datasets.
 
 ## What You'll Find Here
 
@@ -28,7 +24,5 @@ I'm a student in the MUSA program at Penn. My background is in
 
 ## Get in Touch
 
-<!-- CHANGE THIS -->
-
-- Email: your-email@upenn.edu
-- GitHub: [@your-username](https://github.com/your-username)
+- Email: stkath@upenn.edu
+- GitHub: [@steelekatie](https://github.com/steelekatie)
