@@ -53,14 +53,14 @@
     "href": "weekly-notes/week-01.html#proving-r-works",
     "title": "Week 1: Getting Set Up",
     "section": "Proving R Works",
-    "text": "Proving R Works\nThe chunk below runs when this page renders. If you can see a result underneath it on your published site, R and Quarto are talking to each other correctly.\n\nsessionInfo()$R.version$version.string\n\n[1] \"R version 4.6.0 (2026-04-24)\""
+    "text": "Proving R Works\nThe chunk below runs when this page renders. If you can see a result underneath it on your published site, R and Quarto are talking to each other correctly.\n\nsessionInfo()$R.version$version.string\n\n[1] \"R version 4.6.1 (2026-06-24)\""
   },
   {
     "objectID": "weekly-notes/week-01.html#reflection",
     "href": "weekly-notes/week-01.html#reflection",
     "title": "Week 1: Getting Set Up",
     "section": "Reflection",
-    "text": "Reflection\n\nWhat I want out of this course:\nOne thing I’m nervous about:"
+    "text": "Reflection\n\nWhat I want out of this course: I have some experience accessing Census APIs, scraping open data portals, and running spatial joins, but I’d like to get more comfortable with these skills. I’m also looking forward to gaining experience with GIS and eventually using what I learn for modeling.\nMy master’s program has been great for building out technical skills but I haven’t had as much in-class opportunity to apply the skills to real-world datasets or questions about public policy. I’m excited to learn more about how to responsibly investigate/examine policy choices across many domains.\nOne thing I’m nervous about: I don’t have GIS experience yet. I feel confident I’ll be able to pick it up but might be worse off starting out compared to MUSA students and other classmates with more experience."
   },
   {
     "objectID": "weekly-notes/week-01.html#questions-i-still-have",
