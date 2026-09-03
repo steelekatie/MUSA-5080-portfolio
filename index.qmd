@@ -7,14 +7,13 @@ title: "Home"
 Welcome to my portfolio for **MUSA 5080: Public Policy Analytics** at the
 University of Pennsylvania.
 
-This site documents my work in the Master of Urban Spatial Analytics program —
+This site documents my work in the Master of Data Science program —
 weekly notes, course assignments, and a final project applying data analysis to
 urban policy questions.
 
 ## About Me
 
-I'm a student in the Data Science MSE program at Penn; I'm also the Assistant Director for [PORES](pores.upenn.edu) and the [Fox Leadership Program](foxleadership.upenn.edu) on campus. 
-My background is in economics, statistics and quantitative political science research, and I'm excited to learn more about spatial analysis and to apply my skills to new policy datasets.
+I'm a student in the Data Science MSE program at Penn; my background is in economics, statistics, and quantitative political science research, and I'm excited to learn more about spatial analysis and apply my skills to new datasets.
 
 ## What You'll Find Here
 

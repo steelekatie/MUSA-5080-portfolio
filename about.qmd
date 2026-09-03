@@ -4,23 +4,20 @@ title: "About Me"
 
 ## Background
 
-<!-- CHANGE THIS -->
+I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics/public policy. I've been working at Penn since then as the Assistant Director for [PORES](https://www.pores.upenn.edu) and the [Fox Leadership Program](https://foxleadership.upenn.edu) on campus. I hope to work as a data scientist in the public sector in the future.
 
-I 
-Write a few paragraphs about yourself here: where you came from before MUSA,
-what drew you to urban spatial analytics, and what you're hoping to do with it.
+I started on my Master's in Data Science last fall and am excited to expand on my background in quantitative political science research in this course. I'm looking forward to learning more about spatial analysis and applying my programming and research skills to interesting datasets.
+
 
 ## Skills
 
 <!-- CHANGE THIS: update this through the semester as it becomes true -->
 
-- **Languages & Tools:** R, Quarto, Git, Python, Java
-- **Spatial:** (add as you learn)
+- **Languages & Tools:** R, Git, Python, Java
+- **Spatial:** 
 - **Data:** US Census / ACS via `tidycensus`
 
 ## Contact
-
-<!-- CHANGE THIS -->
 
 - Email: stkath@upenn.edu
 - GitHub: [@steelekatie](https://github.com/steelekatie)

@@ -4,14 +4,14 @@
     "href": "index.html",
     "title": "Home",
     "section": "",
-    "text": "Welcome to my portfolio for MUSA 5080: Public Policy Analytics at the University of Pennsylvania.\nThis site documents my work in the Master of Urban Spatial Analytics program — weekly notes, course assignments, and a final project applying data analysis to urban policy questions.\n\n\n\nI’m a student in the MUSA program at Penn. My background is in [YOUR BACKGROUND], and I’m interested in [YOUR INTERESTS].\n\n\n\n\nWeekly Notes — what I’m learning each week\nAssignments — analyses completed for the course\nAbout — more background and how to reach me\n\n\n\n\n\n\nEmail: your-email@upenn.edu\nGitHub: @your-username"
+    "text": "Welcome to my portfolio for MUSA 5080: Public Policy Analytics at the University of Pennsylvania.\nThis site documents my work in the Master of Data Science program — weekly notes, course assignments, and a final project applying data analysis to urban policy questions.\n\n\nI’m a student in the Data Science MSE program at Penn; my background is in economics, statistics, and quantitative political science research, and I’m excited to learn more about spatial analysis and apply my skills to new datasets.\n\n\n\n\nWeekly Notes — what I’m learning each week\nAssignments — analyses completed for the course\nAbout — more background and how to reach me\n\n\n\n\n\nEmail: stkath@upenn.edu\nGitHub: @steelekatie"
   },
   {
     "objectID": "index.html#about-me",
     "href": "index.html#about-me",
     "title": "Home",
     "section": "",
-    "text": "I’m a student in the MUSA program at Penn. My background is in [YOUR BACKGROUND], and I’m interested in [YOUR INTERESTS]."
+    "text": "I’m a student in the Data Science MSE program at Penn; my background is in economics, statistics, and quantitative political science research, and I’m excited to learn more about spatial analysis and apply my skills to new datasets."
   },
   {
     "objectID": "index.html#what-youll-find-here",
@@ -25,7 +25,7 @@
     "href": "index.html#get-in-touch",
     "title": "Home",
     "section": "",
-    "text": "Email: your-email@upenn.edu\nGitHub: @your-username"
+    "text": "Email: stkath@upenn.edu\nGitHub: @steelekatie"
   },
   {
     "objectID": "weekly-notes/week-01.html",
@@ -74,28 +74,28 @@
     "href": "about.html",
     "title": "About Me",
     "section": "",
-    "text": "Write a few paragraphs about yourself here: where you came from before MUSA, what drew you to urban spatial analytics, and what you’re hoping to do with it."
+    "text": "I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics/public policy. I’ve been working at Penn since then as the Assistant Director for PORES and the Fox Leadership Program on campus. I hope to work as a data scientist in the public sector in the future.\nI started on my Master’s in Data Science last fall and am excited to expand on my background in quantitative political science research in this course. I’m looking forward to learning more about spatial analysis and applying my programming and research skills to interesting datasets."
   },
   {
     "objectID": "about.html#background",
     "href": "about.html#background",
     "title": "About Me",
     "section": "",
-    "text": "Write a few paragraphs about yourself here: where you came from before MUSA, what drew you to urban spatial analytics, and what you’re hoping to do with it."
+    "text": "I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics/public policy. I’ve been working at Penn since then as the Assistant Director for PORES and the Fox Leadership Program on campus. I hope to work as a data scientist in the public sector in the future.\nI started on my Master’s in Data Science last fall and am excited to expand on my background in quantitative political science research in this course. I’m looking forward to learning more about spatial analysis and applying my programming and research skills to interesting datasets."
   },
   {
     "objectID": "about.html#skills",
     "href": "about.html#skills",
     "title": "About Me",
     "section": "Skills",
-    "text": "Skills\n\n\nLanguages & Tools: R, Quarto, Git\nSpatial: (add as you learn)\nData: US Census / ACS via tidycensus"
+    "text": "Skills\n\n\nLanguages & Tools: R, Git, Python, Java\nSpatial:\nData: US Census / ACS via tidycensus"
   },
   {
     "objectID": "about.html#contact",
     "href": "about.html#contact",
     "title": "About Me",
     "section": "Contact",
-    "text": "Contact\n\n\nEmail: your-email@upenn.edu\nGitHub: @your-username"
+    "text": "Contact\n\nEmail: stkath@upenn.edu\nGitHub: @steelekatie"
   },
   {
     "objectID": "assignments/index.html",
