@@ -4,9 +4,9 @@ title: "About Me"
 
 ## Background
 
-I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics/public policy. I've been working at Penn since then as the Assistant Director for [PORES](https://www.pores.upenn.edu) and the [Fox Leadership Program](https://foxleadership.upenn.edu) on campus. I hope to work as a data scientist in the public sector in the future.
+I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics and public policy. I've been working at Penn since then as the Assistant Director for [PORES](https://www.pores.upenn.edu) and the [Fox Leadership Program](https://foxleadership.upenn.edu). I hope to work as a data scientist in the public sector in the future.
 
-I started on my Master's in Data Science last fall and am excited to expand on my background in quantitative political science research in this course. I'm looking forward to learning more about spatial analysis and applying my programming and research skills to interesting datasets.
+I started on my Master's in Data Science last fall and am excited to learn more about spatial analysis and to apply my programming and research skills to interesting datasets in this course.
 
 
 ## Skills

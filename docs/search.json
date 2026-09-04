@@ -60,7 +60,7 @@
     "href": "weekly-notes/week-01.html#reflection",
     "title": "Week 1: Getting Set Up",
     "section": "Reflection",
-    "text": "Reflection\n\nWhat I want out of this course: I have some experience accessing Census APIs, scraping open data portals, and running spatial joins, but I’d like to get more comfortable with these skills. I’m also looking forward to gaining experience with GIS and eventually using what I learn for modeling.\nMy master’s program has been great for building out technical skills but I haven’t had as much in-class opportunity to apply the skills to real-world datasets or questions about public policy. I’m excited to learn more about how to responsibly investigate/examine policy choices across many domains.\nOne thing I’m nervous about: I don’t have GIS experience yet. I feel confident I’ll be able to pick it up but might be worse off starting out compared to MUSA students and other classmates with more experience."
+    "text": "Reflection\n\nWhat I want out of this course:\nI have some experience accessing Census APIs, scraping open data portals, and running spatial joins, but I’d like to get more comfortable with these skills. I’m also looking forward to gaining experience with GIS and eventually using what I learn for modeling. My master’s program has been great for building out technical skills but I haven’t had as much in-class opportunity to apply the skills to real-world datasets or questions about public policy. I’m excited to learn more about how to responsibly investigate/examine policy choices across many domains.\nOne thing I’m nervous about:\nI don’t have GIS experience yet. I feel confident I’ll be able to pick it up but might be worse off starting out compared to MUSA students and other classmates with more experience.\nOne thing I learned on Friday:\nI’ve used GitHub on a couple of projects before, but mostly from the command line / occasionally the browser – using the desktop app for ~the first time was more intuitive than I expected."
   },
   {
     "objectID": "weekly-notes/week-01.html#questions-i-still-have",
@@ -74,14 +74,14 @@
     "href": "about.html",
     "title": "About Me",
     "section": "",
-    "text": "I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics/public policy. I’ve been working at Penn since then as the Assistant Director for PORES and the Fox Leadership Program on campus. I hope to work as a data scientist in the public sector in the future.\nI started on my Master’s in Data Science last fall and am excited to expand on my background in quantitative political science research in this course. I’m looking forward to learning more about spatial analysis and applying my programming and research skills to interesting datasets."
+    "text": "I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics/public policy. I’ve been working at Penn since then as the Assistant Director for PORES and the Fox Leadership Program on campus. I hope to work as a data scientist in the public sector in the future.\nI started on my Master’s in Data Science last fall and am excited to learn more about spatial analysis and apply my programming and research skills to interesting datasets in this course."
   },
   {
     "objectID": "about.html#background",
     "href": "about.html#background",
     "title": "About Me",
     "section": "",
-    "text": "I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics/public policy. I’ve been working at Penn since then as the Assistant Director for PORES and the Fox Leadership Program on campus. I hope to work as a data scientist in the public sector in the future.\nI started on my Master’s in Data Science last fall and am excited to expand on my background in quantitative political science research in this course. I’m looking forward to learning more about spatial analysis and applying my programming and research skills to interesting datasets."
+    "text": "I grew up in the Philadelphia area and graduated from Wharton in 2021 with concentrations in statistics and business economics/public policy. I’ve been working at Penn since then as the Assistant Director for PORES and the Fox Leadership Program on campus. I hope to work as a data scientist in the public sector in the future.\nI started on my Master’s in Data Science last fall and am excited to learn more about spatial analysis and apply my programming and research skills to interesting datasets in this course."
   },
   {
     "objectID": "about.html#skills",
