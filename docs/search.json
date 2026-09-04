@@ -126,6 +126,13 @@
     "text": "Answering questions from week 1\nQuiz 1\nSet up portfolio notes\nA lesson on dplyr and the Census\nPracticed"
   },
   {
+    "objectID": "weekly-notes/week-02.html#notes",
+    "href": "weekly-notes/week-02.html#notes",
+    "title": "Week 2: dplyr and Census",
+    "section": "Notes",
+    "text": "Notes\nDecennial Census - long form - every 10 years, 10 questions\nACS - began ~2005 - 3% of households surveyed - estimate for the population: more questions, demos, etc.\n1-year ACS: places &gt; 65k. most current 3-year ACS: dead! 5-year ACS: block group and tract-level. each release is a 5-yr avg.\nState -&gt; County -&gt; Tract (5-8k) -&gt; Block Group (600 - 3k) -&gt; Block"
+  },
+  {
     "objectID": "weekly-notes/week-02.html#key-concepts",
     "href": "weekly-notes/week-02.html#key-concepts",
     "title": "Week 2: dplyr and Census",
