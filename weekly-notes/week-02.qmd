@@ -1,0 +1,35 @@
+---
+title: "Week 2: dplyr and Census"
+description: "table functions and ACS data"
+date: 2026-09-04
+---
+
+## What We Did
+
+<!-- CHANGE THIS: replace with your own notes -->
+
+1. Answering questions from week 1
+2. Quiz 1
+3. Set up portfolio notes
+4. A lesson on dplyr and the Census
+5. Practiced
+
+
+## Key Concepts
+
+The loop: **Edit → Save → Render → Commit → Push → wait → refresh**
+
+## Proving R Works
+
+The chunk below runs when this page renders. If you can see a result underneath
+it on your published site, R and Quarto are talking to each other correctly.
+
+```{r}
+sessionInfo()$R.version$version.string
+```
+
+## Reflection
+
+One thing I learned on Friday:
+
+YAML. Build pane

@@ -1,0 +1,15 @@
+{
+  "hash": "cc681614f68a3d94a2fc0bf2a9c9db24",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Week 2: dplyr and Census\"\ndescription: \"table functions and ACS data\"\ndate: 2026-09-04\n---\n\n## What We Did\n\n<!-- CHANGE THIS: replace with your own notes -->\n\n1. Answering questions from week 1\n2. Quiz 1\n3. Set up portfolio notes\n4. A lesson on dplyr and the Census\n5. Practiced\n\n\n## Key Concepts\n\nThe loop: **Edit → Save → Render → Commit → Push → wait → refresh**\n\n## Proving R Works\n\nThe chunk below runs when this page renders. If you can see a result underneath\nit on your published site, R and Quarto are talking to each other correctly.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nsessionInfo()$R.version$version.string\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] \"R version 4.6.1 (2026-06-24)\"\n```\n\n\n:::\n:::\n\n\n## Reflection\n\nOne thing I learned on Friday:\n\nYAML. Build pane\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
