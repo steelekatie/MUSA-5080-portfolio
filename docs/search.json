@@ -74,7 +74,7 @@
     "href": "assignments/index.html",
     "title": "Assignments",
     "section": "",
-    "text": "Completed assignments for MUSA 5080. New assignments appear here automatically once you add the .qmd file to this folder and render.\n\n\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Completed assignments for MUSA 5080. New assignments appear here automatically once you add the .qmd file to this folder and render.\n\n\n\n\n\n\n\n\n\n\n\nAssignment 2: Who Do We Know the Least About?\n\n\n\n\n\n\n\n\nSep 5, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
@@ -152,5 +152,89 @@
     "title": "Week 2: dplyr and Census",
     "section": "Reflection",
     "text": "Reflection\nOne thing I learned on Friday:\nYAML. Build pane"
+  },
+  {
+    "objectID": "assignments/assignment2 .html",
+    "href": "assignments/assignment2 .html",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(tidycensus)"
+  },
+  {
+    "objectID": "assignments/assignment2 .html#setup",
+    "href": "assignments/assignment2 .html#setup",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "",
+    "text": "library(tidyverse)\nlibrary(tidycensus)"
+  },
+  {
+    "objectID": "assignments/assignment2 .html#the-question",
+    "href": "assignments/assignment2 .html#the-question",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "The question",
+    "text": "The question\nEvery number the American Community Survey publishes is an estimate drawn from a sample, not a count. That means every number comes with a margin of error — a statement about how wrong it might be.\nMost people ignore it. In this assignment, you won’t.\n\n#my_state &lt;- \"AZ\"        # two-letter abbreviation, in quotes\nmy_variable &lt;- \"B01002_001\"     # the variable code, in quotes"
+  },
+  {
+    "objectID": "assignments/assignment2 .html#pulling-the-data",
+    "href": "assignments/assignment2 .html#pulling-the-data",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "Pulling the data",
+    "text": "Pulling the data\n\ncounty_data &lt;- get_acs(\n  geography = \"county\",\n  variables = my_variable,\n  state = params$state,\n  year = 2023,\n  survey = \"acs5\"\n)\n\nLet’s look at what came back.\n\ndim(county_data)\n\n[1] 15  5\n\nhead(county_data)\n\n# A tibble: 6 × 5\n  GEOID NAME                     variable   estimate   moe\n  &lt;chr&gt; &lt;chr&gt;                    &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;\n1 04001 Apache County, Arizona   B01002_001     36.2   0.3\n2 04003 Cochise County, Arizona  B01002_001     42.9   0.5\n3 04005 Coconino County, Arizona B01002_001     32.4   0.2\n4 04007 Gila County, Arizona     B01002_001     51.4   0.5\n5 04009 Graham County, Arizona   B01002_001     34.4   0.3\n6 04011 Greenlee County, Arizona B01002_001     36.1   0.8\n\n\nThere are 15 counties in Arizona; the call to get_acs() retrieved them all."
+  },
+  {
+    "objectID": "assignments/assignment2 .html#how-big-is-the-margin-of-error",
+    "href": "assignments/assignment2 .html#how-big-is-the-margin-of-error",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "How big is the margin of error?",
+    "text": "How big is the margin of error?\nA margin of error of 3,000 means something very different for an estimate of 20,000 than for an estimate of 200,000. To compare across places, we need it as a percentage.\n\ncounty_data &lt;- county_data %&gt;%\n  mutate(moe_pct = moe / estimate * 100)\n\nNow sort to see which counties are measured least reliably.\n\ncounty_data %&gt;%\n  arrange(desc(moe_pct)) %&gt;%\n  select(NAME, estimate, moe, moe_pct) %&gt;%\n  head(10)\n\n# A tibble: 10 × 4\n   NAME                       estimate   moe moe_pct\n   &lt;chr&gt;                         &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;\n 1 Greenlee County, Arizona       36.1   0.8   2.22 \n 2 La Paz County, Arizona         59.7   0.8   1.34 \n 3 Cochise County, Arizona        42.9   0.5   1.17 \n 4 Santa Cruz County, Arizona     37.9   0.4   1.06 \n 5 Navajo County, Arizona         39.4   0.4   1.02 \n 6 Gila County, Arizona           51.4   0.5   0.973\n 7 Graham County, Arizona         34.4   0.3   0.872\n 8 Apache County, Arizona         36.2   0.3   0.829\n 9 Coconino County, Arizona       32.4   0.2   0.617\n10 Yuma County, Arizona           35.8   0.2   0.559\n\n\nGreenlee County has the largest relative margin of error at 2.22%."
+  },
+  {
+    "objectID": "assignments/assignment2 .html#sorting-counties-into-reliability-categories",
+    "href": "assignments/assignment2 .html#sorting-counties-into-reliability-categories",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "Sorting counties into reliability categories",
+    "text": "Sorting counties into reliability categories\n\ncounty_data &lt;- county_data %&gt;%\n  mutate(reliability = case_when(\n    moe_pct &lt; 0.6  ~ \"High confidence\",\n    moe_pct &lt; 1.2 ~ \"Moderate\",\n    TRUE         ~ \"Low confidence\"\n  ))\n\ncount(county_data, reliability)\n\n# A tibble: 3 × 2\n  reliability         n\n  &lt;chr&gt;           &lt;int&gt;\n1 High confidence     6\n2 Low confidence      2\n3 Moderate            7\n\n\nGrouping counties based on moe_pct confidence (high: [0-0.6%); moderate: [0.6% - 1.2%); low otherwise), we see that 6 counties have highly reliable estimates, 7 are moderately reliable, and only 2 counties fall into the low-reliability group."
+  },
+  {
+    "objectID": "assignments/assignment2 .html#grouping-counties-based-on-moe_pct-confidence-high-0-0.6-moderate-0.6---1.2-low-otherwise-we-see-that-6-counties-have-highly-reliable-estimates-7-are-moderately-reliable-and-only-2-counties-estimates-have-low-reliability.",
+    "href": "assignments/assignment2 .html#grouping-counties-based-on-moe_pct-confidence-high-0-0.6-moderate-0.6---1.2-low-otherwise-we-see-that-6-counties-have-highly-reliable-estimates-7-are-moderately-reliable-and-only-2-counties-estimates-have-low-reliability.",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "Grouping counties based on moe_pct confidence: {high: [0-0.6%); moderate: [0.6% - 1.2%); low otherwise}, we see that 6 counties have highly reliable estimates, 7 are moderately reliable, and only 2 counties’ estimates have low reliability.",
+    "text": "Grouping counties based on moe_pct confidence: {high: [0-0.6%); moderate: [0.6% - 1.2%); low otherwise}, we see that 6 counties have highly reliable estimates, 7 are moderately reliable, and only 2 counties’ estimates have low reliability."
+  },
+  {
+    "objectID": "assignments/assignment2 .html#is-the-margin-of-error-bigger-in-small-places",
+    "href": "assignments/assignment2 .html#is-the-margin-of-error-bigger-in-small-places",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "Is the margin of error bigger in small places?",
+    "text": "Is the margin of error bigger in small places?\nTo answer this we need population and our variable side by side, in the same row. That means a wide pull.\n\ncounty_wide &lt;- get_acs(\n  geography = \"county\",\n  variables = c(myvar = my_variable,\n                pop   = \"B01003_001\"),\n  state = params$state,\n  year = 2023,\n  survey = \"acs5\",\n  output = \"wide\"\n)\n\nhead(county_wide)\n\n# A tibble: 6 × 6\n  GEOID NAME                     myvarE myvarM   popE  popM\n  &lt;chr&gt; &lt;chr&gt;                     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;\n1 04001 Apache County, Arizona     36.2    0.3  65680    NA\n2 04003 Cochise County, Arizona    42.9    0.5 125458    NA\n3 04005 Coconino County, Arizona   32.4    0.2 144643    NA\n4 04007 Gila County, Arizona       51.4    0.5  53610    NA\n5 04009 Graham County, Arizona     34.4    0.3  38860    NA\n6 04011 Greenlee County, Arizona   36.1    0.8   9452    NA\n\n\n\ncounty_wide &lt;- county_wide %&gt;%\n  mutate(moe_pct = myvarM / myvarE * 100) %&gt;%\n  mutate(reliability = case_when(\n    moe_pct &lt; 0.6  ~ \"High confidence\",\n    moe_pct &lt; 1.2 ~ \"Moderate\",\n    TRUE         ~ \"Low confidence\"\n  ))\n\nNow compare the average population of counties in each reliability category.\n\ncounty_wide %&gt;%\n  group_by(reliability) %&gt;%\n  summarize(\n    n_counties = n(),\n    avg_population = mean(popE)\n  )\n\n# A tibble: 3 × 3\n  reliability     n_counties avg_population\n  &lt;chr&gt;                &lt;int&gt;          &lt;dbl&gt;\n1 High confidence          6       1109652.\n2 Low confidence           2         13028.\n3 Moderate                 7         83458.\n\n\nThis table clearly shows that ACS estimates for median age are least reliable in counties with small populations. The relative margin of error is highest in small counties and decreases as counties grow in mean population."
+  },
+  {
+    "objectID": "assignments/assignment2 .html#what-this-means-for-policy",
+    "href": "assignments/assignment2 .html#what-this-means-for-policy",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "What this means for policy",
+    "text": "What this means for policy\nWe know the least about the two smallest counties in Arizona, Greenlee and La Paz, which make up the “low confidence” moe_pct category. The ACS samples 2-3% of U.S. households annually – and response rates are lower than that – so in Greenlee, with a population of 9,452, the 5-year estimate is likely based on only a couple hundred households. This leads to a higher sampling error than in larger counties.\nSince sparsely populated counties have the highest sampling error, their estimates are noisier than those in denser areas. Maricopa County, which is one of the largest counties in the United States, has an moe_pct of only 0.27%, meaning we’re 95% certain that the true median age in Maricopa is within ~1 month of the estimate (37.5 years). Greenlee County has an moe_pct of 2.22%; with an estimated median age of 36.2 years, we can only narrow down the true median age to a much wider ~10-month window at the 95% confidence level.\nThis could have big implications for policymaking. If funding or resource allocation is determined based on a specific cutoff point or threshold, and estimates are treated as equally precise across counties, small counties are most likely to be hurt, since we see more fluctuation and uncertainty in their estimates as a result of smaller sample sizes."
+  },
+  {
+    "objectID": "assignments/assignment2 .html#this-could-have-big-implications-for-policymaking.-if-funding-or-resource-allocation-is-determined-based-on-a-specific-cutoff-point-or-threshold-and-estimates-are-treated-as-equally-precise-across-counties-small-counties-are-most-likely-to-be-hurt-since-we-see-more-fluctuation-and-uncertainty-in-their-estimates-as-a-result-of-smaller-sample-sizes.",
+    "href": "assignments/assignment2 .html#this-could-have-big-implications-for-policymaking.-if-funding-or-resource-allocation-is-determined-based-on-a-specific-cutoff-point-or-threshold-and-estimates-are-treated-as-equally-precise-across-counties-small-counties-are-most-likely-to-be-hurt-since-we-see-more-fluctuation-and-uncertainty-in-their-estimates-as-a-result-of-smaller-sample-sizes.",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "This could have big implications for policymaking. If funding or resource allocation is determined based on a specific cutoff point or threshold, and estimates are treated as equally precise across counties, small counties are most likely to be hurt, since we see more fluctuation and uncertainty in their estimates as a result of smaller sample sizes.",
+    "text": "This could have big implications for policymaking. If funding or resource allocation is determined based on a specific cutoff point or threshold, and estimates are treated as equally precise across counties, small counties are most likely to be hurt, since we see more fluctuation and uncertainty in their estimates as a result of smaller sample sizes."
+  },
+  {
+    "objectID": "assignments/assignment2 .html#before-you-submit",
+    "href": "assignments/assignment2 .html#before-you-submit",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "Before you submit",
+    "text": "Before you submit\n\n\n\n\n\n\nNoteDelete this box — checklist\n\n\n\n\nYour name is in the YAML header\nEvery instruction callout is deleted\nEvery [bracketed prompt] is replaced with your own writing\nNo ___ blanks remain anywhere\nThe file is at assignments/assignment2.qmd\nSession → Restart R, then render the whole project. It works.\nCommitted and pushed\nYou opened your live site and looked at the published page"
+  },
+  {
+    "objectID": "assignments/assignment2 .html#there-are-15-counties-in-arizona-the-call-to-get_acs-retrieved-them-all.",
+    "href": "assignments/assignment2 .html#there-are-15-counties-in-arizona-the-call-to-get_acs-retrieved-them-all.",
+    "title": "Assignment 2: Who Do We Know the Least About?",
+    "section": "There are 15 counties in Arizona; the call to get_acs() retrieved them all.",
+    "text": "There are 15 counties in Arizona; the call to get_acs() retrieved them all."
   }
 ]
