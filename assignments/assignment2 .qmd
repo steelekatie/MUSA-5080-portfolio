@@ -30,8 +30,8 @@ Most people ignore it. In this assignment, you won't.
 
 
 ```{r}
-#my_state <- "AZ"        # two-letter abbreviation, in quotes
-my_variable <- "B01002_001"     # the variable code, in quotes
+#my_state <- "AZ"
+my_variable <- "B01002_001" # median age
 ```
 
 ## Pulling the data
