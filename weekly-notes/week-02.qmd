@@ -29,24 +29,14 @@ State -> County -> Tract (5-8k) -> Block Group (600 - 3k) -> Block
 
 
 ## Key Concepts
-
-The loop: **Edit → Save → Render → Commit → Push → wait → refresh**
-
-
-
-## Proving R Works
-
-The chunk below runs when this page renders. If you can see a result underneath
-it on your published site, R and Quarto are talking to each other correctly.
-
-```{r}
-sessionInfo()$R.version$version.string
-```
-
+select() : choose columns
+filter() : choose rows
+mutate() : add column based on some data manipulation
+arrange() : sort rows in asc or desc order
+group_by() : narrow many rows down -> few groups based on shared traits
+summarize() : descriptives + quick calcs
 
 
 ## Reflection
 
-One thing I learned on Friday:
-
-YAML. Build pane
+One thing I learned on Friday: About the build pane! Also, that there was once a 3-year ACS.

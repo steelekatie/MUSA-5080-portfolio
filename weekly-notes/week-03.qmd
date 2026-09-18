@@ -1,0 +1,56 @@
+---
+title: "Week 3: Plotting w/ ggplot()"
+description: "ggplot() plots and gt() tables"
+date: 2026-09-11
+---
+
+## What We Did
+
+1. Quiz 2
+2. A lesson on ggplot() foundations
+3. Practiced plotting ACS data w/ MOEs properly represented
+4. Derived Uncertainty
+5. Practiced, built uncertainty tables
+
+## Notes
+### ggplot()
+A plot = a mapping of columns in our data to visual properties on the page.
+
+ggplot(data) + : creates blank canvas
+aes(...) +     : column mappings -> structural features of plot
+geom_*() +     : type of chart
+
+#### which geom_*?
+- _histogram()        : how a variable is spread
+- _point()            : how two variables relate
+- _boxplot(), _col()  : how groups compare
+- _line()             : how things change over time
+- _errorbar()         : how uncertain is a value?
+
+
+### Derived Uncertainty
+- Cannot just add MOEs together, need to use tidycensus
+  - moe_sum()       : when adding estimates together
+  - moe_prop()      : when taking one estimate as share of another (parent) estimate
+  - moe_ratio()     : when creating ratio of of two (unrelated) estimates
+
+- ACS 5-years are an average of the estimates from each of 5 years. When computing change over time, should compare non-overlapping intervals.
+
+- Also need to take standard error of differences in estimates to account for MOEs across years. 
+
+## Key Concepts
+- aes() is only looking for columns w/in data, not "aesthetics" like colors/style/etc.
+
+- Where it goes depends on whether we're calling ggplot() alone or piping from existing df into it:
+  - ggplot(df) + aes([plot-wide settings]),   or
+  - df %>% ggplot(aes([plot-wide settings])) %>% ... 
+
+- Cannot just add raw ACS MOEs from different geographies together.
+- When calculating change over time, be conscious of interval overlap in ACS data and account for MOEs in the comparison
+
+## Reflection
+
+Things I learned on Friday:
+- "gg" comes from "Grammar of Graphics".
+- tidycensus has pre-built functions for computing adjusted MOEs for manipulations of multiple Census vars. I haven't used tidycensus much and have done these calcs manually in the past so this was cool to hear!
+
