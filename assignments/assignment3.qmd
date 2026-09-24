@@ -1,5 +1,6 @@
 ---
-title: "Verify the Claim: Census figures on Philly neighborhoods show inequality, high numbers of whites living in poverty"
+title: "Assignment 3: Verify the Claim"
+subtitle: "Census figures on Philly neighborhoods show inequality, high numbers of whites living in poverty"
 author: "Katie Steele"
 date: today
 format:
@@ -346,7 +347,7 @@ acs_trend_hoods <- acs5_2010_hoods %>%
 
 ```
 
-#### 2.4 Significance
+#### 2.3.1 Significance
 
 Between the two releases, 32 of 142 Philadelphia neighborhoods (~23%) show changes to poverty rate that are statistically significant at the 90% confidence level. Their names are displayed below:
 
@@ -366,7 +367,7 @@ print(acs_trend_hoods %>% filter(significant) %>% select(neighborhood), n = Inf)
 
 ```
 
-#### 2.5 Plot
+#### 2.3.2 Plot
 The neighborhoods with significant changes are also plotted below according to the size/direction of their estimated change in poverty rate.
 ```{r fig.height=7, fig.width=6}
 # Visualize with error bars
@@ -420,7 +421,7 @@ acs_trend_hoods %>%
          diff, diff_moe,
          est_denom_2010, est_denom_2017)
 ```
-**Partially supported:**
+#### **3.1.1 Partially supported:**
 
 >"The neighborhood of Eastwick in Southwest Philadelphia, near Philadelphia International Airport, showed the greatest poverty-rate increase of any community, rocketing from 12 percent during 2006-10 to 26 percent in the newest survey."
 
@@ -439,7 +440,7 @@ acs_trend_hoods %>%
 ```
 But sorting the dataframe on the size of increase, we see that at least 4 other communities had larger increases to poverty rate between 2006-2010 and 2013-2017 than Eastwick; the ~15.6 point increase I find there is smaller than the significant increases I find in Penrose (+30.9pp), Chinatown (+30.4pp), Wister (+20.4pp), and East Parkside (+18.4pp). That said, each neighborhood is relatively small, and the estimates each have a large relative MOE, so it is possible that Eastwick did have the highest increase of any community -- the high end of its confidence interval falls within Penrose and Chinatown's confidence intervals, for example -- but cannot be confirmed with certainty.
 
-**Not supported:**
+#### **3.1.2 Not supported:**
 
 > "The more detailed survey released on Thursday revealed that the poverty rates in 22 majority-white neighborhoods in Philadelphia increased between the 2006-10 survey and the 2013-17 survey ... Holmesburg recorded the highest increase, from 2 percent to 19 percent."
 
@@ -449,7 +450,7 @@ Not only do my numbers not match up here -- I find Holmesburg had a baseline 17 
 
 I do find that the increase in poverty rate in Mayfair is significant at the 90% confidence level, but my estimates don't line up. I find that the poverty rate increased from roughly 11 percent -> 19 percent, while the article's text cites an increase from 1 percent -> 14 percent. Again, the interactive map shows much closer estimates to mine, of 12 percent -> 18 percent. 
 
-**Cannot be determined:**
+#### **3.1.3 Cannot be determined:**
 
 >"Fairhill in North Philadelphia registered a stunning 61 percent poverty rate."
 
