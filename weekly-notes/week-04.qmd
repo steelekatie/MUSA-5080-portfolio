@@ -1,0 +1,66 @@
+---
+title: "Week 4: Coordinate Reference Systems and Spatial analysis"
+description: "CRS intro, sf library"
+date: 2026-09-18
+---
+
+## What We Did
+
+1. Week 3 recap
+2. Quiz
+3. Intro to CRS - geographic vs projected
+4. st_set_crs(), st_transform(), st_buffer()
+5. Week 4 lab challenge
+
+## Notes
+### Coordinate Reference Systems
+#### Geographic
+- live on a sphere
+- units: degrees
+- 3D models of earth tied to locations on surface via lat, long
+- angular to center of earth
+- ex: NAD27, 83; WGS84 - standard for GPS
+
+#### Projected
+- cylindrical projections of earth -> 2D flat grid
+- units: feet or meters
+- line of tangency: no distortion
+  - further from LOT = much more distorted
+  - can change projection LOT to be more accurate for specific geographies
+- good for local mapping
+
+### Projections
+Tradeoffs / different types:
+**S**hape: conformal conic - nice shapes for e.g. Canada
+**A**rea: equal-area projections
+**D**istance: equal-distance projections
+**D**irection: Mercator projections
+
+#### EPSG: cylindrical
+| EPSG | Name | Units |
+| 2272 | PA southern state plane | feet or meters |
+| 5070 | Albers Equal Area | meters |
+| 4326 | WGS 84 | degrees |
+
+#### UTM: transverse cylindrical
+- 60 zones, 6 deg each w/ LOT vertical in meters
+- long states like CA or ID might use UTM since better fit
+
+
+### library(sf)
+- st_set_crs() to set correct (true label), if missing
+- st_transform() to change/convert existing CRS
+
+- st_buffer() to buffer radius around pts, using units of layer
+
+- st_intersects() : bordering or within
+- st_touches() : only bordering
+- st_within() : fully within
+
+- st_filter() : count tracts that meet some condition
+- st_intersection() : shapes change - more shapes, common area
+- st_union() : everything
+- st_join(stations, tracts) : e.g. join census tract data to stns
+- st_distance() : returns a matrix e.g. of each tract centroid distance to each stn
+
+
