@@ -1,0 +1,707 @@
+---
+title: "Verify the Claim: Census figures on Philly neighborhoods show inequality, high numbers of whites living in poverty"
+author: "Katie Steele"
+date: today
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-summary: "Show code"
+    embed-resources: true
+params:
+  STATE: "PA"
+  COUNTY: "Philadelphia"
+  VARS: ["B17001_002", "B17001_001", ] # [poverty count, total pop]
+---
+***
+
+### Setup
+
+```{r setup}
+#| include: false
+library(tidyverse)
+library(tidycensus)
+library(stringr)
+library(gt)
+library(sf)
+
+```
+
+***
+
+# Part 1 - Reconstruct
+### 1.1 ACS data load
+::: {.callout-note collapse = "true"}
+## Instructions
+Pull the ACS data the article appears to rely on. Document:
+
+  - Which variable(s) you used and why. Include the variable code.
+  - Which years and survey you used and why.
+  - What you had to assume, because the article does not say.
+  - State clearly whether the two periods the article compares overlap. If they do, say what that means for any conclusion drawn from the comparison.
+:::
+
+In this assignment, I attempt to recreate [this 2018 WHYY article](https://whyy.org/articles/new-census-figures-on-philly-neighborhoods-show-inequality-high-numbers-of-whites-living-in-poverty/)'s analysis on changes to poverty rate across Philadelphia. To do so, I pull two variables from the 2006-2010 and 2013-2017 ACS 5-year releases: `B17001_002`, total number of people whose income is below poverty level, and `B17001_001`, total population for whom poverty status is measured. The proportion `B17001_002` / `B17001_001` = `poverty rate`. 
+
+I based my choice of ACS releases on WHYY's; they directly reference both: "The latest data are from a five-year survey between 2013 and 2017. Comparisons reflect changes from the 2006-2010 five-year period." These two periods do not overlap, which allows for valid significance testing on the differences between the two periods.
+
+The ACS data allow me to compute the poverty rate estimate for each tract in Philadelphia in 2010 and 2017, and to estimate the change in tract poverty rates between the two releases. I further aggregate to the neighborhood level to examine whether the trends cited in the WHYY article hold up. The article does not state what neighborhood boundaries were used for analysis, nor what method was used to match tracts to neighborhoods. I used the latest set of neighborhood boundaries from [OpenDataPhilly](https://opendataphilly.org/datasets/philadelphia-neighborhoods/); this dataset was last updated in April 2024, which suggests that my replicated analysis is unlikely to line up completely with the original WHYY reporting.
+
+
+```{r pull funct}
+
+# Note: I've been using R since ~2019, so wrote a couple functions in this script to simplify pulls + calculations across the two ACS releases of interest.
+
+pull_tracts <- function(yr){
+  get_acs(
+    geography = "tract",
+    variables = params$VARS,
+    state = params$STATE,
+    county = params$COUNTY,
+    year = yr,
+    survey = "acs5"
+  ) %>%
+  #   # drop tract name
+  # select(-NAME) %>%
+  # pivot wider so one entry per tract
+  pivot_wider(names_from = variable, 
+              values_from = c(estimate, moe)) %>%
+  # rename vars for clarity - using paste0() to avoid hardocoding
+  rename(est_denom = paste0("estimate_", params$VARS[2]),
+         moe_denom = paste0("moe_", params$VARS[2]),
+         est_numer = paste0("estimate_", params$VARS[1]),
+         moe_numer = paste0("moe_", params$VARS[1])) %>%
+  
+  mutate(pov_rate = est_numer/est_denom,
+         pov_rate_moe = moe_prop(est_numer, est_denom, 
+                                 moe_numer, moe_denom))
+}
+
+```
+
+### 1.2 NA examination
+::: {.callout-note collapse = "true"}
+## Instructions
+Handle your missing values deliberately. Some tracts will produce NA. Find out why before you decide what to do about them, and say what you decided and why.
+:::
+
+The 2010 ACS release produces 7 tracts with 0 population; the 2017 release produces 8, displayed below. Examining the tracts using [Google Data Commons](https://datacommons.org/place/geoId/42101980500), I find that all of the tracts represent nonresidential areas -- near the airport, in waterfront areas, or encompassing parks. Each of these tracts are dropped from the analysis because they'll produce NA values due to the zero denominators.
+
+Tract 9806 (also highlighted below) is the one tract in which residents were surveyed in 2010 but not in 2017; we can see that its population was only 92 in 2010, and it had an extremely high MOE relative to the estimate. This small tract is also dropped to avoid causing trend issues in a potentially sparsely populated neighborhood.
+
+```{r pull data}
+
+acs5_2010 <- pull_tracts(2010) 
+acs5_2017 <- pull_tracts(2017)
+
+# check tracts w/ 0 pop in 2010
+acs5_2010 %>%
+  filter(est_denom == 0) %>%
+  select(NAME) %>%
+  mutate(NAME = str_remove_all(NAME, "Philadelphia County, Pennsylvania|Census Tract |, ")) %>%
+  pull()
+
+# check tracts w/ 0 pop in 2017
+acs5_2017 %>%
+  filter(est_denom == 0) %>%
+  select(NAME) %>%
+  mutate(NAME = str_remove_all(NAME, "Philadelphia County, Pennsylvania|Census Tract |, ")) %>%
+  pull()
+
+# check tract 9806 -- pop present in 2010 but not 2017
+# small pop, very high moe relative to est -- will get dropped in merge
+acs5_2010 %>%
+  filter(str_detect(NAME, "9806"))
+
+# drop NAs
+acs5_2010 <- acs5_2010 %>%
+  filter(est_denom != 0)
+
+acs5_2017 <- acs5_2017 %>%
+  filter(est_denom != 0)
+
+acs5_2010 <- acs5_2010 %>%
+  filter(!str_detect(NAME, "9806"))
+
+```
+
+
+## 1.3 Neighborhood-level extension
+### 1.3.1 Data collection + standardization
+To aggregate tracts to the neighborhood level, I downloaded and loaded the [GeoJSON file from OpenDataPhilly](https://opendataphilly.org/datasets/philadelphia-neighborhoods/) which contains the boundaries of 142 Philadelphia neighborhoods. I then pulled the geometries from the 2010 and 2017 ACS releases and used `st_transform()` to standardize the CRS to NAD-83 across each dataset.
+
+```{r nbhd read geometries}
+#| output: false
+hoods <- st_read("assignments/philadelphia-neighborhoods.geojson")
+
+tracts10 <- get_acs(
+  geography = "tract",
+  variables = params$VARS[2], # denominator var (total pop)
+  state = params$STATE,
+  county = params$COUNTY,
+  year = 2010,
+  survey = "acs5",
+  geometry = TRUE
+) %>%
+  filter(estimate != 0 & !str_detect(NAME, "9806")) %>% # drop same NAs
+  select(GEOID, geometry)
+
+
+tracts17 <- get_acs(
+  geography = "tract",
+  variables = params$VARS[2], # denominator var (total pop)
+  state = params$STATE,
+  county = params$COUNTY,
+  year = 2017,
+  survey = "acs5",
+  geometry = TRUE
+) %>%
+  filter(estimate != 0) %>% # drop same NAs
+  select(GEOID, geometry)
+
+```
+
+
+### 1.3.2 Tract <-> neighborhood join
+I joined a tract to a neighborhood if the tract's centroid fell within the neighborhood's boundaries. 
+
+```{r nbhd merge}
+#| output: false
+st_crs(hoods)$epsg # 4326
+st_crs(tracts10)$epsg # 4269
+st_crs(tracts17)$epsg # 4269
+hoods <- hoods %>% st_transform(crs = 4269) # convert to match
+
+
+# *Googled* to find this function after the code below threw a warning/error: degenerate edge
+tracts10 <- st_make_valid(tracts10)
+tracts17 <- st_make_valid(tracts17)
+hoods    <- st_make_valid(hoods)
+
+# create crosswalk for 2010 ACS tracts -> neighborhoodmapping
+cross10 <- tracts10 %>%
+  distinct(GEOID, geometry) %>%
+  st_centroid() %>%
+  st_join(hoods, join = st_within) %>%
+  st_drop_geometry() %>%
+  select(GEOID, MAPNAME) %>%
+  rename(neighborhood = MAPNAME)
+
+# create crosswalk for 2017 ACS tracts -> neighborhood mapping
+cross17 <- tracts17 %>%
+  distinct(GEOID, geometry) %>%
+  st_centroid() %>%
+  st_join(hoods, join = st_within) %>%
+  st_drop_geometry() %>%
+  select(GEOID, MAPNAME) %>%
+  rename(neighborhood = MAPNAME)
+
+
+# merge neighborhoods to ACS data
+acs5_2010 <- acs5_2010 %>%
+  left_join(cross10, by = "GEOID") %>%
+  filter(!is.na(neighborhood)) # drop one tract which didn't fall w/in neighborhood
+
+acs5_2017 <- acs5_2017 %>%
+  left_join(cross17, by = "GEOID")%>%
+  filter(!is.na(neighborhood))
+```
+
+***
+
+# Part 2 - Test
+::: {.callout-note collapse = "true"}
+## Instructions
+  - Compute the poverty rate and its margin of error.
+:::
+
+### 2.1 Neighborhood estimates and MOEs
+
+With each tract assigned to its neighborhood, I aggregated `B17001_001` and `B17001_002` estimates and MOEs up to the neighborhood level and calculated neighborhood poverty rates and MOEs.
+```{r nbhd agg}
+# aggregate tracts to neighborhood level
+agg_hood <- function(df){
+  df %>%
+    group_by(neighborhood) %>%
+    summarize(
+      est_numer = sum(est_numer),
+      moe_numer = moe_sum(moe = moe_numer, estimate = est_numer),
+      est_denom = sum(est_denom),
+      moe_denom = moe_sum(moe = moe_denom, estimate = est_denom),
+      n_tracts = n()
+    ) %>%
+    mutate(pov_rate = est_numer / est_denom,
+           pov_rate_moe = moe_prop(est_numer, est_denom, moe_numer, moe_denom))
+}
+
+# get neighborhood rates for each ACS release
+acs5_2010_hoods <- agg_hood(acs5_2010)
+acs5_2017_hoods <- agg_hood(acs5_2017)
+```
+
+### 2.2 Neighborhood coefficients of variation
+::: {.callout-note collapse = "true"}
+## Instructions
+  - Compute the coefficient of variation and flag reliability using the Jurjevich et al. (2018) thresholds.
+:::
+
+Here, I calculate the coefficient of variation for each neighborhood estimate. Using Jurjevich et al. (2018) thresholds, I report how many neighborhoods fell into each reliability bucket in each ACS release.
+
+```{r nbhd cv}
+# Add flags according to reliability of estimate
+# cv = (SE/estimate) *100
+# se = MOE / 1.645
+# cv = ((MOE/1.645)/estimate) *100
+
+cv_flag = function(df){
+  df %>%
+    mutate(cv = ((pov_rate_moe/1.645)/pov_rate) * 100,
+         emoji = case_when(
+           cv < 12 ~ "😁",
+           cv >= 12 & cv <40 ~ "🤨",
+           cv >= 40 ~ "🤥"
+           ),
+         reliability = factor(
+           case_when(
+           cv < 12 ~ "Reliable",
+           cv >= 12 & cv <40 ~ "Somewhat reliable",
+           cv >= 40 ~ "Unreliable"
+           ),
+           # ordered factor for table
+           levels = c("Reliable", "Somewhat reliable", "Unreliable"),
+           ordered = TRUE
+           )
+         )
+}
+
+acs5_2010_hoods <- cv_flag(acs5_2010_hoods)
+acs5_2017_hoods <- cv_flag(acs5_2017_hoods)
+```
+
+```{r nbhd cv table}
+# Build reliability table
+reliability_table <- full_join(
+  count(acs5_2010_hoods, emoji, reliability, name = "n_2010"),
+  count(acs5_2017_hoods, emoji, reliability, name = "n_2017"),
+  by = c("emoji", "reliability")
+  ) %>%
+  arrange(reliability)
+
+reliability_table %>%
+  gt() %>%
+  cols_label(
+    emoji = "",
+    reliability = "Reliability",
+    n_2010 = "2010 (n)",
+    n_2017 = "2017 (n)"
+  ) %>%
+  cols_align(align = "left",
+             columns = c(emoji, reliability, n_2010, n_2017)) %>%
+  tab_header(
+    title = "Reliability of neighborhood poverty rate estimates",
+    subtitle = "Philadelphia neighborhoods, ACS 2010 and 2017 5-year estimates"
+  ) %>%
+  tab_source_note(
+    "Reliability thresholds follow Jurjevich et al. (2018):"
+    ) %>%
+  tab_source_note(
+    "CV < 12% reliable, 12-40% somewhat reliable, > 40% unreliable."
+    )
+
+```
+We can see that the 2017 estimates were marginally more reliable than the 2010 estimates using the given thresholds.
+
+***
+
+### 2.3 Neighborhood change in poverty rate
+::: {.callout-note collapse = "true"}
+## Instructions
+  - Compute the change between the two periods and the margin of error of that change.
+  - Test whether the change is statistically distinguishable from zero at 90% confidence.
+  - Report how many tracts show a statistically detectable change and how many do not.
+:::
+Now I examine the main claims of the article: that poverty rate changed drastically across Philadelphia between the 2006-2010 and 2013-2017 estimates.
+```{r nbhd diff}
+
+# merge two ACS 5 years by neighborhood,
+# first selecting columns of interest + renaming w/ yr
+acs_trend_hoods <- acs5_2010_hoods %>%
+  select(neighborhood, pov_rate, pov_rate_moe, 
+         est_denom, n_tracts) %>%
+  rename(pov_rate_2010 = pov_rate,
+         pov_rate_moe_2010 = pov_rate_moe,
+         est_denom_2010 = est_denom,
+         n_tracts_2010 = n_tracts) %>%
+  inner_join(acs5_2017_hoods %>% 
+              select(neighborhood, pov_rate, pov_rate_moe, 
+                     est_denom, n_tracts) %>%
+              rename(pov_rate_2017 = pov_rate,
+                     pov_rate_moe_2017 = pov_rate_moe,
+                     est_denom_2017 = est_denom,
+                     n_tracts_2017 = n_tracts),
+            by = "neighborhood") %>%
+  # calculate change to poverty levels
+  mutate(diff = pov_rate_2017 - pov_rate_2010,
+         diff_moe = sqrt(pov_rate_moe_2017^2 + pov_rate_moe_2010^2))
+
+```
+
+#### 2.4 Significance
+
+Between the two releases, 32 of 142 Philadelphia neighborhoods (~23%) show changes to poverty rate that are statistically significant at the 90% confidence level. Their names are displayed below:
+
+```{r nbhd signif}
+# from class: Z = diff / SE_diff
+# SE = MOE / 1.645
+# Z = 1.645 * diff / MOE_diff
+acs_trend_hoods <- acs_trend_hoods %>%
+  mutate(z = 1.645 * diff / diff_moe,
+         significant = abs(z) > 1.645) # 90% 
+
+# how many neighborhoods are statistically signifcant?
+sum(acs_trend_hoods$significant, na.rm = TRUE)
+
+# print neighborhoods of significance
+print(acs_trend_hoods %>% filter(significant) %>% select(neighborhood), n = Inf)
+
+```
+
+#### 2.5 Plot
+The neighborhoods with significant changes are also plotted below according to the size/direction of their estimated change in poverty rate.
+```{r fig.height=7, fig.width=6}
+# Visualize with error bars
+acs_trend_hoods %>%
+  filter(significant) %>%
+  #mutate(NAME = str_remove_all(NAME, "Philadelphia County, Pennsylvania|Census Tract|,")) %>%
+  ggplot(aes(x = reorder(neighborhood, diff), y = diff)) +
+  geom_col(aes(fill = diff > 0), 
+           show.legend = FALSE,  # added to suppress legend
+           ) + 
+  geom_errorbar(aes(ymin = diff - diff_moe,
+                    ymax = diff + diff_moe), width = 0.3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  coord_flip() +
+  #scale_y_continuous(expand = expansion(mult = 0.5)) + # added to space out a bit
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 8)) +
+  scale_fill_manual(values = c("TRUE" = "salmon", 
+                               "FALSE" = "steelblue")) + # added to match map below
+  labs(title = "Philadelphia neighborhoods with statistically significant\nchange in poverty rate",
+       subtitle = "2006–2010 vs 2013–2017, ACS 5-year estimates",
+       x = NULL, y = "Change in poverty rate")
+
+```
+
+***
+
+
+
+
+
+# Part 3 - Adjudicate
+::: {.callout-note collapse = "true"}
+## Instructions
+Sort the article’s claims into three buckets:
+
+  - Supported — the data backs this up.
+  - Not supported — the data contradicts it, or the apparent effect is not distinguishable from noise.
+  - Cannot be determined — answering would require data or methodological detail the article does not provide and you cannot recover.
+:::
+
+### 3.1 Investigating WHYY's neighborhood-specific claims
+```{r eastwick, mayfair, holmesburg}
+acs_trend_hoods %>%
+  filter(neighborhood %in% c("Holmesburg",
+                             "Eastwick",
+                             "Mayfair")) %>%
+  select(neighborhood, significant,
+         pov_rate_2010, pov_rate_moe_2010,
+         pov_rate_2017, pov_rate_moe_2017,
+         diff, diff_moe,
+         est_denom_2010, est_denom_2017)
+```
+**Partially supported:**
+
+>"The neighborhood of Eastwick in Southwest Philadelphia, near Philadelphia International Airport, showed the greatest poverty-rate increase of any community, rocketing from 12 percent during 2006-10 to 26 percent in the newest survey."
+
+Eastwick's poverty rate spiked from roughly 12 percent in 2006-2010 to 26 percent in 2013-2017, and this change was statistically significant at the 90% confidence level. 
+
+```{r eastwick}
+acs_trend_hoods %>%
+  filter(significant) %>%
+  mutate(ci = paste0("[", round(diff - diff_moe, 3), ", ", 
+                     round(diff + diff_moe, 3), "]")) %>%
+  select(neighborhood, diff, diff_moe, ci,
+         pov_rate_2010, pov_rate_2017,
+         est_denom_2010, est_denom_2017) %>%
+  arrange(desc(diff)) %>%
+  head(5)
+```
+But sorting the dataframe on the size of increase, we see that at least 4 other communities had larger increases to poverty rate between 2006-2010 and 2013-2017 than Eastwick; the ~15.6 point increase I find there is smaller than the significant increases I find in Penrose (+30.9pp), Chinatown (+30.4pp), Wister (+20.4pp), and East Parkside (+18.4pp). That said, each neighborhood is relatively small, and the estimates each have a large relative MOE, so it is possible that Eastwick did have the highest increase of any community -- the high end of its confidence interval falls within Penrose and Chinatown's confidence intervals, for example -- but cannot be confirmed with certainty.
+
+**Not supported:**
+
+> "The more detailed survey released on Thursday revealed that the poverty rates in 22 majority-white neighborhoods in Philadelphia increased between the 2006-10 survey and the 2013-17 survey ... Holmesburg recorded the highest increase, from 2 percent to 19 percent."
+
+Not only do my numbers not match up here -- I find Holmesburg had a baseline 17 percent (+/- 5 percent) poverty rate in 2010 and a 25 percent (+/-7 percent) poverty rate in 2017 -- I also do not find that the change is statistically significant at the 90% level. Interestingly, WHYY's own interactive `Where Poverty Has Increased in Philadelphia` map shows different estimates for Holmesburg (18 percent -> 22 percent) than the ones that appear in the text; the map estimates do roughly agree with my findings.
+
+> "[In Mayfair], the poverty rate rose from 1 percent to 14 percent."
+
+I do find that the increase in poverty rate in Mayfair is significant at the 90% confidence level, but my estimates don't line up. I find that the poverty rate increased from roughly 11 percent -> 19 percent, while the article's text cites an increase from 1 percent -> 14 percent. Again, the interactive map shows much closer estimates to mine, of 12 percent -> 18 percent. 
+
+**Cannot be determined:**
+
+>"Fairhill in North Philadelphia registered a stunning 61 percent poverty rate."
+
+```{r fairhill}
+#| code-fold: show
+any(hoods$MAPNAME == "Fairhill")
+any(acs_trend_hoods$neighborhood == "Fairhill")
+```
+My aggregated tract -> neighborhood dataset does not contain any entry for Fairhill, which receives a lot of attention in this article -- so I can't confirm whether the 2017 ACS 5-year showed that 61% of its residents were living in poverty.
+
+This leads me to believe that WHYY used different neighborhood boundaries, or a different methodology for matching tracts to neighborhoods, than I did, which could also be driving some of the discrepancies between my findings and theirs. I joined a tract to a neighborhood if its centroid fell within the neighborhood, but a different approach (e.g., distance or % coverage) would produce different results.
+
+I considered whether WHYY might have been using the 2016 and 2017 ACS 1-year estimates for white poverty to compute the estimates included in the text (because they're so different from mine), but the 1-year ACS isn't released at the tract level and I don't think they could pull neighborhood-level estimates from them as a result. Since the neighborhoods are referenced as majority-white, I also don't think that the 1-year white poverty rate estimates in Mayfair/Holmesburg would be 10 to 15 points off the total poverty rate from the 5-year estimates.
+
+It seems more likely that there was some transcription error in the article writeup, given that the 2010 and 2017 numbers in the interactive map align much more closely with my own findings and that all four of those estimates disagree with the text itself.
+
+
+
+
+### 3.2 Additional viz: Neighborhood-level trend map
+Below, I attempt to replicate the article's `Where Poverty Has Increased in Philadelphia` map, referenced above, and I adjust it to reflect only the neighborhoods where findings were significant at the 90% confidence level. 
+
+Since the WHYY map appears to differentiate between large and more moderate changes to poverty rate, I set my own threshold to separate significant neighborhoods -- first, grouping by the direction of change, then finding the median change in poverty rate among the neighborhoods in each group. Neighborhoods with a greater absolute change than the absolute median change in their group are shaded darker to reflect larger changes; others are shaded lighter to reflect smaller changes. All other neighborhoods (including NA areas like those around the airport) are shaded grey.
+
+```{r fig.height = 6, fig.width = 6}
+# create threshold for large vs. moderate changes
+thresholds <- acs_trend_hoods %>% filter(significant) %>%
+  group_by(sign(diff)) %>%
+  summarize(threshold = quantile(diff, 0.5))
+
+for_map <- hoods %>%
+  left_join(acs_trend_hoods, by = c("MAPNAME" = "neighborhood")) %>%
+  # not significant or any NA tracts/neighborhoods (e.g. airport or parks) will get grayed out
+  mutate(severity = factor(
+    case_when(!significant | is.na(significant) ~ "No significant change",
+              diff >= thresholds$threshold[2] ~ "Large increase",
+              diff > 0 ~ "Moderate increase",
+              diff <= thresholds$threshold[1] ~ "Large decrease",
+              diff < 0 ~ "Moderate decrease"),
+    levels = c("Large decrease",
+               "Moderate decrease",
+               "No significant change",
+               "Moderate increase",
+               "Large increase")))
+
+ggplot(for_map) +
+  geom_sf(aes(fill = severity), color = "white") +
+  scale_fill_manual(
+    values = c("steelblue", "lightblue", 
+               "lightgray", 
+               "peachpuff", "salmon"),
+    name = NULL ) + # googled to find how to suppress this
+  theme_void() +
+  theme(legend.position = "right",) +
+  labs(title = "Philadelphia neighborhoods with statistically significant\nchange in poverty rate",
+       subtitle = "2006–2010 vs 2013–2017, ACS 5-year estimates")
+
+```
+
+
+#### 3.2.1 Second attempt, with neighborhood names included
+```{r fig.height = 10, fig.width = 10}
+# Plot with neighborhood names -- 
+ggplot(for_map) +
+  geom_sf(aes(fill = severity), color = "white", linewidth = 0.2) +
+  geom_sf_text(
+  data = for_map %>% filter(significant),
+  aes(label = str_wrap(MAPNAME, width = 6)),
+  size = 2,
+  color = "black",
+  lineheight = 0.8) +
+  scale_fill_manual(
+    values = c("steelblue", "lightblue", 
+               "lightgray", 
+               "peachpuff", "salmon"),
+    name = NULL ) + # googled to find how to suppress this
+  theme_void() +
+  theme(legend.position = "right",) +
+  labs(title = "Philadelphia neighborhoods with statistically significant change in poverty rate",
+       subtitle = "2006–2010 vs 2013–2017, ACS 5-year estimates")
+```
+
+I used geom_sf_text with str_wrap() to add the text to the plot, but couldn't get it to cooperate very well given all the overlaps around Center City; I still had to make the font size tiny/unreadable. Google suggested ggrepel might help, but I'm not familiar with the package, so I ended here.
+
+
+***
+
+# Part 4 - Rewrite
+::: {.callout-note collapse = "true"}
+## Instructions
+Rewrite the article’s central paragraph so that it is defensible given what you found. Keep it readable — this is for a general audience, not a methods section. You may not simply add a disclaimer; the rewrite should say something substantive and true.
+:::
+
+The more detailed Census data released Thursday reveals a sharp rise in poverty across many Philadelphia neighborhoods between the 2006-2010 and 2013-2017 survey periods, including several majority-white communities. In Eastwick, near the Philadelphia International Airport, the poverty rate more than doubled, from about 12 percent to 26 percent; in Mayfair, it rose from roughly 11 percent to 19 percent. But the trend wasn't limited to predominantly white neighborhoods. Chinatown's poverty rate also appears to have climbed significantly, although the exact size of the increase is difficult to pin down precisely: One estimate puts it at anywhere from roughly 16 to 44 percentage points.
+
+
+***
+
+
+# (+) Part 5 - Tract-level analysis
+I've also included my original analysis of Census tracts below. I highlighted my neighborhood analysis for the main assignment since it tied more directly to the WHYY article, but I used the same logic to run the analysis at the tract level without the final aggregation.
+
+<details>
+<summary><b>Show tract-level analysis</b></summary>
+
+*Note: My assignment was getting really crowded (and repetitive) with both my neighborhood and tract-level analyses, so I Googled how to use HTML to hide a full section by default.*
+
+### Coefficient of Variation
+
+```{r cv}
+# Add flags according to reliability of estimate
+# cv = (SE/estimate) *100
+# se = MOE / 1.645
+# cv = ((MOE/1.645)/estimate) *100
+
+cv_flag = function(df){
+  df %>%
+    mutate(cv = ((pov_rate_moe/1.645)/pov_rate) * 100,
+         emoji = case_when(
+           cv < 12 ~ "😁",
+           cv >= 12 & cv <40 ~ "🤨",
+           cv >= 40 ~ "🤥"
+           ),
+         reliability = factor(
+           case_when(
+           cv < 12 ~ "Reliable",
+           cv >= 12 & cv <40 ~ "Somewhat reliable",
+           cv >= 40 ~ "Unreliable"
+           ),
+           # ordered factor for table
+           levels = c("Reliable", "Somewhat reliable", "Unreliable"),
+           ordered = TRUE
+           )
+         )
+}
+
+acs5_2010 <- cv_flag(acs5_2010)
+acs5_2017 <- cv_flag(acs5_2017)
+```
+
+```{r cv table}
+# Build reliability table
+reliability_table <- full_join(
+  count(acs5_2010, emoji, reliability, name = "n_2010"),
+  count(acs5_2017, emoji, reliability, name = "n_2017"),
+  by = c("emoji", "reliability")
+  ) %>%
+  arrange(reliability)
+
+reliability_table %>%
+  gt() %>%
+  cols_label(
+    emoji = "",
+    reliability = "Reliability",
+    n_2010 = "2010 (n)",
+    n_2017 = "2017 (n)"
+  ) %>%
+  cols_align(align = "left",
+             columns = c(emoji, reliability, n_2010, n_2017)) %>%
+  tab_header(
+    title = "Reliability of tract poverty rate estimates",
+    subtitle = "Philadelphia Census tracts, ACS 2010 and 2017 5-year estimates"
+  ) %>%
+  tab_source_note(
+    "Reliability thresholds follow Jurjevich et al. (2018):"
+    ) %>%
+  tab_source_note(
+    "CV < 12% reliable, 12-40% somewhat reliable, > 40% unreliable."
+    )
+
+```
+
+***
+
+### Change in poverty rate
+
+```{r diff}
+# merge two ACS releases by tract,
+# first selecting columns of interest + renaming w/ yr
+acs_trend <- acs5_2010 %>%
+  select(GEOID, NAME, pov_rate, pov_rate_moe) %>%
+  rename(pov_rate_2010 = pov_rate,
+         pov_rate_moe_2010 = pov_rate_moe) %>%
+  inner_join(acs5_2017 %>% 
+              select(GEOID, pov_rate, pov_rate_moe) %>%
+              rename(pov_rate_2017 = pov_rate,
+                     pov_rate_moe_2017 = pov_rate_moe),
+            by = "GEOID")
+
+acs_trend <- acs_trend %>%
+  mutate(diff = pov_rate_2017 - pov_rate_2010,
+         diff_moe = sqrt(pov_rate_moe_2017^2 + pov_rate_moe_2010^2))
+```
+
+#### Significance
+```{r signif}
+# from class: Z = diff / SE_diff
+# SE = MOE / 1.645
+# Z = 1.645 * diff / MOE_diff
+acs_trend <- acs_trend %>%
+  mutate(z = 1.645 * diff / diff_moe,
+         significant = abs(z) > 1.645) # 90% 
+
+# how many tracts are statistically signifcant?
+sum(acs_trend$significant, na.rm = TRUE)
+```
+Between the two ACS releases, 63 of 376 Philadelphia Census tracts show changes to poverty rate that are statistically significant at the 90% confidence level. I cannot confirm a significant change to poverty rate in 313 tracts (~83%).
+
+#### Mean difference
+```{r mean diff}
+# what's the mean difference among the tracts that show significance?
+print(paste("Mean difference among tracts with statistically significant change:", round(mean(acs_trend$diff[acs_trend$significant == TRUE]), 4)))
+
+```
+
+The mean difference in poverty rate among tracts with a statistically significant change between the 2010 and 2017 ACS releases is near zero. Below, we can see that the directional effects roughly cancel out among tracts with statistically significant changes, which drives the very small (ungrouped) mean difference.
+
+```{r mean diff directional}
+# did increases/decreases cancel out
+acs_trend %>%
+  filter(significant) %>%
+  mutate(direction = if_else(diff > 0, "increase", "decrease")) %>%
+  group_by(direction) %>%
+  summarise(n = n(), mean_change = mean(diff))
+```
+
+
+#### Plot
+The tracts with significant changes are plotted below.
+
+```{r fig.height = 8, fig.width = 6}
+acs_trend %>%
+  filter(significant) %>%
+  mutate(NAME = str_remove_all(NAME, "Philadelphia County, Pennsylvania|Census |,")) %>%
+  ggplot(aes(x = reorder(NAME, diff), y = diff)) +
+  geom_col(aes(fill = diff > 0), 
+           show.legend = FALSE,  # added to suppress legend
+           ) + 
+  geom_errorbar(aes(ymin = diff - diff_moe,
+                    ymax = diff + diff_moe), width = 0.3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  coord_flip() +
+  #scale_y_continuous(expand = expansion(mult = 0.5)) + # added to space out a bit
+  theme_minimal() +
+  scale_fill_manual(values = c("TRUE" = "salmon", 
+                               "FALSE" = "steelblue")) + # added to match map: red = bad (increase in pov), blue = better
+  labs(title = "Philadelphia tracts with statistically \nsignificant change in poverty rate",
+       subtitle = "2006–2010 vs 2013–2017, ACS 5-year estimates",
+       x = NULL, y = "Change in poverty rate")
+
+```
+
+</details>
+
+***
