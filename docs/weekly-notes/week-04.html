@@ -174,9 +174,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">Notes</a>
   <ul class="collapse">
   <li><a href="#coordinate-reference-systems" id="toc-coordinate-reference-systems" class="nav-link" data-scroll-target="#coordinate-reference-systems">Coordinate Reference Systems</a></li>
+  <li><a href="#projections" id="toc-projections" class="nav-link" data-scroll-target="#projections">Projections</a></li>
+  <li><a href="#librarysf" id="toc-librarysf" class="nav-link" data-scroll-target="#librarysf">library(sf)</a></li>
   </ul></li>
-  <li><a href="#geographic" id="toc-geographic" class="nav-link" data-scroll-target="#geographic">#### Geographic</a></li>
-  <li><a href="#reflection" id="toc-reflection" class="nav-link" data-scroll-target="#reflection">Reflection</a></li>
   </ul>
 </nav>
     </div>
@@ -227,21 +227,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="notes">Notes</h2>
 <section id="coordinate-reference-systems" class="level3">
 <h3 class="anchored" data-anchor-id="coordinate-reference-systems">Coordinate Reference Systems</h3>
+<section id="geographic" class="level4">
+<h4 class="anchored" data-anchor-id="geographic">Geographic</h4>
+<ul>
+<li>live on a sphere</li>
+<li>units: degrees</li>
+<li>3D models of earth tied to locations on surface via lat, long</li>
+<li>angular to center of earth</li>
+<li>ex: NAD27, 83; WGS84 - standard for GPS</li>
+</ul>
 </section>
-</section>
-<section id="geographic" class="level2">
-<h2 class="anchored" data-anchor-id="geographic">#### Geographic</h2>
 <section id="projected" class="level4">
 <h4 class="anchored" data-anchor-id="projected">Projected</h4>
+<ul>
+<li>cylindrical projections of earth -&gt; 2D flat grid</li>
+<li>units: feet or meters</li>
+<li>line of tangency: no distortion
+<ul>
+<li>further from LOT = much more distorted</li>
+<li>can change projection LOT to be more accurate for specific geographies</li>
+</ul></li>
+<li>good for local mapping</li>
+</ul>
 </section>
 </section>
-<section id="reflection" class="level2">
-<h2 class="anchored" data-anchor-id="reflection">Reflection</h2>
-<p>Things I learned on Friday: - “gg” comes from “Grammar of Graphics”. - tidycensus has pre-built functions for computing adjusted MOEs for manipulations of multiple Census vars. I haven’t used tidycensus much and have done these calcs manually in the past so this was cool to hear!</p>
+<section id="projections" class="level3">
+<h3 class="anchored" data-anchor-id="projections">Projections</h3>
+<p>Tradeoffs / different types:</p>
+<p><strong>S</strong>hape: conformal conic - nice shapes for e.g.&nbsp;Canada</p>
+<p><strong>A</strong>rea: equal-area projections</p>
+<p><strong>D</strong>istance: equal-distance projections</p>
+<p><strong>D</strong>irection: Mercator projections</p>
+<section id="epsg-cylindrical" class="level4">
+<h4 class="anchored" data-anchor-id="epsg-cylindrical">EPSG: cylindrical</h4>
+<div class="line-block">EPSG | Name | Units |<br>
+2272 | PA southern state plane | feet or meters |<br>
+5070 | Albers Equal Area | meters |<br>
+4326 | WGS 84 | degrees |</div>
+</section>
+<section id="utm-transverse-cylindrical" class="level4">
+<h4 class="anchored" data-anchor-id="utm-transverse-cylindrical">UTM: transverse cylindrical</h4>
+<ul>
+<li>60 zones, 6 deg each w/ LOT vertical in meters</li>
+<li>long states like CA or ID might use UTM since better fit</li>
+</ul>
+</section>
+</section>
+<section id="librarysf" class="level3">
+<h3 class="anchored" data-anchor-id="librarysf">library(sf)</h3>
+<ul>
+<li><p>st_set_crs() to set correct (true label), if missing</p></li>
+<li><p>st_transform() to change/convert existing CRS</p></li>
+<li><p>st_buffer() to buffer radius around pts, using units of layer</p></li>
+<li><p>st_intersects() : bordering or within</p></li>
+<li><p>st_touches() : only bordering</p></li>
+<li><p>st_within() : fully within</p></li>
+<li><p>st_filter() : count tracts that meet some condition</p></li>
+<li><p>st_intersection() : shapes change - more shapes, common area</p></li>
+<li><p>st_union() : everything</p></li>
+<li><p>st_join(stations, tracts) : e.g.&nbsp;join census tract data to stns</p></li>
+<li><p>st_distance() : returns a matrix e.g.&nbsp;of each tract centroid distance to each stn</p></li>
+</ul>
 
 
 <!-- -->
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -713,16 +764,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Notes</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">### Coordinate Reference Systems</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Geographic</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Projected</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reflection</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>Things I learned on Friday:</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>"gg" comes from "Grammar of Graphics".</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>tidycensus has pre-built functions for computing adjusted MOEs for manipulations of multiple Census vars. I haven't used tidycensus much and have done these calcs manually in the past so this was cool to hear!</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>live on a sphere</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>units: degrees</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>3D models of earth tied to locations on surface via lat, long</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>angular to center of earth</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>ex: NAD27, 83; WGS84 - standard for GPS</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Projected</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>cylindrical projections of earth -&gt; 2D flat grid</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>units: feet or meters</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>line of tangency: no distortion</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>further from LOT = much more distorted</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>can change projection LOT to be more accurate for specific geographies</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>good for local mapping</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### Projections</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>Tradeoffs / different types:</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>**S**hape: conformal conic - nice shapes for e.g. Canada</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>**A**rea: equal-area projections</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>**D**istance: equal-distance projections</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>**D**irection: Mercator projections</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="fu">#### EPSG: cylindrical</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> EPSG <span class="pp">|</span> Name <span class="pp">|</span> Units <span class="pp">|</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2272 <span class="pp">|</span> PA southern state plane <span class="pp">|</span> feet or meters <span class="pp">|</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5070 <span class="pp">|</span> Albers Equal Area <span class="pp">|</span> meters <span class="pp">|</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4326 <span class="pp">|</span> WGS 84 <span class="pp">|</span> degrees <span class="pp">|</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">#### UTM: transverse cylindrical</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>60 zones, 6 deg each w/ LOT vertical in meters</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>long states like CA or ID might use UTM since better fit</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### library(sf)</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_set_crs() to set correct (true label), if missing</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_transform() to change/convert existing CRS</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_buffer() to buffer radius around pts, using units of layer</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_intersects() : bordering or within</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_touches() : only bordering</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_within() : fully within</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_filter() : count tracts that meet some condition</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_intersection() : shapes change - more shapes, common area</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_union() : everything</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_join(stations, tracts) : e.g. join census tract data to stns</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>st_distance() : returns a matrix e.g. of each tract centroid distance to each stn</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

@@ -31,9 +31,13 @@ date: 2026-09-18
 
 ### Projections
 Tradeoffs / different types:
+
 **S**hape: conformal conic - nice shapes for e.g. Canada
+
 **A**rea: equal-area projections
+
 **D**istance: equal-distance projections
+
 **D**irection: Mercator projections
 
 #### EPSG: cylindrical
