@@ -16,8 +16,6 @@ params:
 ---
 ***
 
-### Setup
-
 ```{r setup}
 #| include: false
 library(tidyverse)
@@ -347,7 +345,7 @@ acs_trend_hoods <- acs5_2010_hoods %>%
 
 ```
 
-#### 2.3.1 Significance
+#### **2.3.1 Significance**
 
 Between the two releases, 32 of 142 Philadelphia neighborhoods (~23%) show changes to poverty rate that are statistically significant at the 90% confidence level. Their names are displayed below:
 
@@ -367,7 +365,7 @@ print(acs_trend_hoods %>% filter(significant) %>% select(neighborhood), n = Inf)
 
 ```
 
-#### 2.3.2 Plot
+#### **2.3.2 Plot**
 The neighborhoods with significant changes are also plotted below according to the size/direction of their estimated change in poverty rate.
 ```{r fig.height=7, fig.width=6}
 # Visualize with error bars
@@ -511,7 +509,7 @@ ggplot(for_map) +
 ```
 
 
-#### 3.2.1 Second attempt, with neighborhood names included
+#### **3.2.1 Second attempt, with neighborhood names included**
 ```{r fig.height = 10, fig.width = 10}
 # Plot with neighborhood names -- 
 ggplot(for_map) +
@@ -544,7 +542,7 @@ I used geom_sf_text with str_wrap() to add the text to the plot, but couldn't ge
 Rewrite the article’s central paragraph so that it is defensible given what you found. Keep it readable — this is for a general audience, not a methods section. You may not simply add a disclaimer; the rewrite should say something substantive and true.
 :::
 
-The more detailed Census data released Thursday reveals a sharp rise in poverty across many Philadelphia neighborhoods between the 2006-2010 and 2013-2017 survey periods, including several majority-white communities. In Eastwick, near the Philadelphia International Airport, the poverty rate more than doubled, from about 12 percent to 26 percent; in Mayfair, it rose from roughly 11 percent to 19 percent. But the trend wasn't limited to predominantly white neighborhoods. Chinatown's poverty rate also appears to have climbed significantly, although the exact size of the increase is difficult to pin down precisely: One estimate puts it at anywhere from roughly 16 to 44 percentage points.
+The more detailed Census data released Thursday reveals a sharp rise in poverty across many Philadelphia communities between the 2006-2010 and 2013-2017 survey periods. Poverty climbed in many of the city's predominantly white neighborhoods; in Mayfair, it rose from roughly 11 to 19 percent. In Eastwick, near the Philadelphia International Airport -- a neighborhood that has seen significant growth in its African immigrant population in recent years -- the poverty rate more than doubled, from about 11 percent to 27 percent. And increasing poverty touched other communities in the city; the poverty rate in neighborhoods like Chinatown and Penrose appears to have climbed by about 30 percentage points, though the data leave uncertainty about the exact size -- anywhere from roughly 16 to 45 percentage points.
 
 
 ***
