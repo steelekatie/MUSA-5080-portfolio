@@ -68,3 +68,10 @@ Tradeoffs / different types:
 - st_distance() : returns a matrix e.g. of each tract centroid distance to each stn
 
 
+## Questions
+- Still some lingering questions about st_intersection(), st_union()
+
+## Reflection
+Things I learned on Friday:
+- A ton about maps! And the history of mapping / spatial analysis
+- Also a lot about the sf package, which I have only used once or twice

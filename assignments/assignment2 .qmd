@@ -2,7 +2,7 @@
 title: "Assignment 2: Who Do We Know the Least About?"
 subtitle: "Measuring uncertainty in American Community Survey data"
 author: "Katie Steele"
-date: today
+date: 2026-09-06
 format:
   html:
     toc: true

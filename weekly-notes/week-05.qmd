@@ -1,0 +1,42 @@
+---
+title: "Week 5: "
+description: ""
+date: 2026-09-25
+---
+
+## What We Did
+
+1. Week 4 recap
+2. Intro to ML
+3. Quiz
+4. Week 5 lab challenge
+
+## Notes
+
+### Machine Learning
+- Parametric models: assumes functional form, easier to explain/interpret 
+- Non-parametric models: do not assume function form, harder to explain/interpret
+
+- This course focused on predictive vs. inferential modeling
+- Care less about having to explain or interpret model -- interested in y_hat
+- Care less if in an individual predictor is significant. If it boosts predictive power, leave it in
+  - We'll throw in a lot of proxies and variables to see how they perform.
+
+#### Models
+Rigid <----------------------------------------------> Flexible
+<-----LinReg - L1/L2 - LogReg - Trees - RF - GBM - NNs----->
+
+
+#### Cross validation
+K-fold CV
+- hold out 1/k folds as test data
+- calculate RMSE
+- run k rounds
+- calculate avg RMSE
+- evaluate model quality
+
+
+## Reflection
+
+Things I learned on Friday:
+- I've done a lot of ML work in classes but have mainly used Python, so it was good to see some of the implementation in R (e.g. caret)

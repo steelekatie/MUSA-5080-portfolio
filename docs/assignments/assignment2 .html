@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Katie Steele">
-<meta name="dcterms.date" content="2026-09-05">
+<meta name="dcterms.date" content="2026-09-06">
 
 <title>Assignment 2: Who Do We Know the Least About? – Katie Steele - MUSA 5080 Portfolio</title>
 <style>
@@ -203,7 +203,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 5, 2026</p>
+      <p class="date">September 6, 2026</p>
     </div>
   </div>
   
@@ -227,8 +227,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Every number the American Community Survey publishes is an estimate drawn from a sample, not a count. That means every number comes with a margin of error — a statement about how wrong it might be.</p>
 <p>Most people ignore it. In this assignment, you won’t.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#my_state &lt;- "AZ"        # two-letter abbreviation, in quotes</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>my_variable <span class="ot">&lt;-</span> <span class="st">"B01002_001"</span>     <span class="co"># the variable code, in quotes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#my_state &lt;- "AZ"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>my_variable <span class="ot">&lt;-</span> <span class="st">"B01002_001"</span> <span class="co"># median age</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="pulling-the-data" class="level2">
@@ -376,6 +376,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We know the least about the two smallest counties in Arizona, Greenlee and La Paz, which make up the “low confidence” <code>moe_pct</code> category. The ACS samples 2-3% of U.S. households annually – and response rates are lower than that – so in Greenlee, with a population of 9,452, the 5-year estimate is likely based on only a couple hundred households. This leads to a higher sampling error than in larger counties.</p>
 <p>Since sparsely populated counties have the highest sampling error, their estimates are noisier than those in denser areas. Maricopa County, which is one of the largest counties in the United States, has an <code>moe_pct</code> of only 0.27%, meaning we’re 95% certain that the true median age in Maricopa is within ~1 month of the estimate (37.5 years). Greenlee County has an <code>moe_pct</code> of 2.22%; with an estimated median age of 36.2 years, we can only narrow down the true median age to a much wider ~10-month window at the 95% confidence level.</p>
 <p>This could have big implications for policymaking. If funding or resource allocation is determined based on a specific cutoff point or threshold, and estimates are treated as equally precise across counties, small counties are most likely to be hurt, since we see more fluctuation and uncertainty in their estimates as a result of smaller sample sizes.</p>
+<hr>
 
 
 <!-- -->
@@ -838,7 +839,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Assignment 2: Who Do We Know the Least About?"</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Measuring uncertainty in American Community Survey data"</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Katie Steele"</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> 2026-09-06</span></span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
@@ -866,8 +867,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="co">#my_state &lt;- "AZ"        # two-letter abbreviation, in quotes</span></span>
-<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>my_variable <span class="ot">&lt;-</span> <span class="st">"B01002_001"</span>     <span class="co"># the variable code, in quotes</span></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="co">#my_state &lt;- "AZ"</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>my_variable <span class="ot">&lt;-</span> <span class="st">"B01002_001"</span> <span class="co"># median age</span></span>
 <span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Pulling the data</span></span>
@@ -982,6 +983,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-166"><a href="#cb18-166" aria-hidden="true" tabindex="-1"></a>Since sparsely populated counties have the highest sampling error, their estimates are noisier than those in denser areas. Maricopa County, which is one of the largest counties in the United States, has an <span class="in">`moe_pct`</span> of only 0.27%, meaning we're 95% certain that the true median age in Maricopa is within ~1 month of the estimate (37.5 years). Greenlee County has an <span class="in">`moe_pct`</span> of 2.22%; with an estimated median age of 36.2 years, we can only narrow down the true median age to a much wider ~10-month window at the 95% confidence level.</span>
 <span id="cb18-167"><a href="#cb18-167" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-168"><a href="#cb18-168" aria-hidden="true" tabindex="-1"></a>This could have big implications for policymaking. If funding or resource allocation is determined based on a specific cutoff point or threshold, and estimates are treated as equally precise across counties, small counties are most likely to be hurt, since we see more fluctuation and uncertainty in their estimates as a result of smaller sample sizes.</span>
+<span id="cb18-169"><a href="#cb18-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-170"><a href="#cb18-170" aria-hidden="true" tabindex="-1"></a>---</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
