@@ -122,7 +122,8 @@ nrow(tracts)
 Which kind of tract has no median rent?
 (Hint: think about who lives there.)
 
-## Lost 31 tracts. If a tract has no median rent, it likely means nobody lives there. It could mean nobody rents (everybody owns) - so likely a small, high-income tract - but then not worth predicting median rent.
+
+Lost 31 tracts. If a tract has no median rent, it likely means nobody lives there. It could mean nobody rents (everybody owns) - so likely a small, high-income tract - but then not worth predicting median rent.
 
 ## Part 2: Look before you model
 
@@ -142,6 +143,7 @@ ggplot(tracts, aes(x = med_incE, y = med_rentE)) + #med_incE
 
 **Stop and look:** Does a straight line describe this cloud well everywhere, or does it bend?
 Where are the points that sit far from the line?
+
 Not fully -- we see some big outliers in very low and very high-income sections.
 The cloud also widens a bit overall around \$75-100k.
 

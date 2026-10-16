@@ -24,7 +24,8 @@ date: 2026-09-25
 
 #### Models
 Rigid <----------------------------------------------> Flexible
-<-----LinReg - L1/L2 - LogReg - Trees - RF - GBM - NNs----->
+
+|<-----LinReg - L1/L2 - LogReg - Trees - RF - GBM - NNs----->|
 
 
 #### Cross validation

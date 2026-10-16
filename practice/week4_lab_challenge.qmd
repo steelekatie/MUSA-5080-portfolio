@@ -258,7 +258,7 @@ st_crs(philly_tracts)$units   # what units are we in now?
 **Write down the units.** Every number you type from now on is in these units.
 Feet
 
----
+------------------------------------------------------------------------
 
 ## Part 3: Join by where
 
@@ -404,19 +404,24 @@ You now have three different definitions of "has access":
 
 ### Your team's task
 
-1.  **Define "low-income."** For example, you could use the bottom quartile of tract median income, or a dollar threshold. Pick one and write it down.
+1.  **Define "low-income."** For example, you could use the bottom quartile of tract median income, or a dollar threshold.
+    Pick one and write it down.
 
     I define a tract as low income if it earns 66% or less of all tracts' median income.
 
-2.  **Define "access."** Choose one of the three definitions above and set its threshold. Distance - within 0.25 miles of a station
+2.  **Define "access."** Choose one of the three definitions above and set its threshold.
+    Distance - within 0.25 miles of a station
 
-3.  **Answer the question.** Which low-income tracts lack access? Produce:
+3.  **Answer the question.** Which low-income tracts lack access?
+    Produce:
 
     - **The count** of low-income tracts without access
     - **A map** showing them (a `geom_sf()` layer plus the stations)
     - **The reliability breakdown:** of those tracts, how many have High / Moderate / Low reliability income estimates?
 
-4.  **Defend one decision** in 2–3 sentences. Why this access definition and not another? How would your count change if you used a different one?
+4.  **Defend one decision** in 2–3 sentences.
+    Why this access definition and not another?
+    How would your count change if you used a different one?
 
 ```{r}
 #| label: challenge
@@ -461,7 +466,7 @@ no_access %>%
 ### Scoring (for bragging rights, not grades)
 
 |   | Points |
-|------------------------------------|------------------------------------|
+|----|----|
 | Count is correct *for your stated definitions* | 2 |
 | Map shows the right tracts and the stations, with a title that states your definitions | 2 |
 | Reliability breakdown included | 1 |
@@ -470,11 +475,14 @@ no_access %>%
 
 ### Before you present, discuss
 
-- If a tract is "low-income" with a CV of 45%, does it belong on your list? What would you tell Indego about it?
+- If a tract is "low-income" with a CV of 45%, does it belong on your list?
+  What would you tell Indego about it?
 
   No - highly unreliable estimate
 
-- Your three access definitions give different counts. Which one would an Indego planner prefer? Which one would a neighborhood advocate prefer?
+- Your three access definitions give different counts.
+  Which one would an Indego planner prefer?
+  Which one would a neighborhood advocate prefer?
 
   Indego planner would pref touch
 
