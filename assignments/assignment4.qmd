@@ -2,6 +2,7 @@
 title: "Assignment 4"
 subtitle: "Building Features, Watching What Happens"
 author: "Katie Steele"
+date: today
 format:
   html:
     toc: true
